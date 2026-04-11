@@ -82,10 +82,12 @@ def admin():
     Records are ordered by most recent first.
     """
     conn = get_db()
-    records = conn.execute(
-        "SELECT * FROM student_progress ORDER BY timestamp DESC"
-    ).fetchall()
-    conn.close()
+    try:
+        records = conn.execute(
+            "SELECT * FROM student_progress ORDER BY timestamp DESC"
+        ).fetchall()
+    finally:
+        conn.close()
     return render_template("admin.html", records=records)
 
 
@@ -178,10 +180,12 @@ def get_progress():
         return jsonify({"error": "Name parameter is required"}), 400
 
     conn = get_db()
-    record = conn.execute(
-        "SELECT * FROM student_progress WHERE name = ?", (name,)
-    ).fetchone()
-    conn.close()
+    try:
+        record = conn.execute(
+            "SELECT * FROM student_progress WHERE name = ?", (name,)
+        ).fetchone()
+    finally:
+        conn.close()
 
     if record:
         return jsonify({
@@ -204,4 +208,4 @@ def get_progress():
 
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=False, host="0.0.0.0", port=5000)
