@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Lab — Experiment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-flask"></i> Virtual Lab
+        </div>
+        <ul class="nav-links">
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/lab" class="active"><i class="fas fa-vial"></i> Lab</a></li>
+            <li><a href="/admin"><i class="fas fa-user-shield"></i> Admin</a></li>
+        </ul>
+    </nav>
+
+    <div class="lab-container">
+        <!-- Student Info Panel -->
+        <div class="student-info-panel" id="studentInfoPanel">
+            <h2><i class="fas fa-user"></i> Student Information</h2>
+            <p>Enter your details to begin the experiment.</p>
+            <form id="studentForm">
+                <div class="form-group">
+                    <label for="studentName"><i class="fas fa-id-badge"></i> Full Name</label>
+                    <input type="text" id="studentName" placeholder="e.g. Dhiraj Zingare" required>
+                </div>
+                <div class="form-group">
+                    <label for="studentClass"><i class="fas fa-school"></i> Class / Section</label>
+                    <input type="text" id="studentClass" placeholder="e.g. B.Tech CSE — Sec A" required>
+                </div>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-play"></i> Begin Experiment
+                </button>
+            </form>
+        </div>
+
+        <!-- Lab Workspace (hidden until student info submitted) -->
+        <div class="lab-workspace" id="labWorkspace" style="display:none;">
+
+            <!-- Progress Bar -->
+            <div class="progress-section">
+                <div class="progress-header">
+                    <h3><i class="fas fa-tasks"></i> Experiment Progress</h3>
+                    <span id="progressPercent" class="progress-percent">0%</span>
+                </div>
+                <div class="progress-bar-wrapper">
+                    <div class="progress-bar" id="progressBar" style="width:0%;"></div>
+                </div>
+            </div>
+
+            <!-- Process Flow Diagram (SVG) -->
+            <div class="flow-diagram-section">
+                <h3><i class="fas fa-project-diagram"></i> Process Flow Diagram</h3>
+                <div class="flow-diagram">
+                    <div class="flow-step" id="flow-0">
+                        <div class="flow-icon"><i class="fas fa-atom"></i></div>
+                        <span>Neutralization</span>
+                    </div>
+                    <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                    <div class="flow-step" id="flow-1">
+                        <div class="flow-icon"><i class="fas fa-blender"></i></div>
+                        <span>Mixing</span>
+                    </div>
+                    <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                    <div class="flow-step" id="flow-2">
+                        <div class="flow-icon"><i class="fas fa-plus-circle"></i></div>
+                        <span>Additives</span>
+                    </div>
+                    <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                    <div class="flow-step" id="flow-3">
+                        <div class="flow-icon"><i class="fas fa-wind"></i></div>
+                        <span>Drying</span>
+                    </div>
+                    <div class="flow-arrow"><i class="fas fa-long-arrow-alt-right"></i></div>
+                    <div class="flow-step" id="flow-4">
+                        <div class="flow-icon"><i class="fas fa-box"></i></div>
+                        <span>Packaging</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step Cards -->
+            <div class="steps-section">
+                <!-- Step 1: Neutralization -->
+                <div class="step-card" id="step-0" data-step="0">
+                    <div class="step-badge">Step 1</div>
+                    <div class="step-header">
+                        <h3><i class="fas fa-atom"></i> Neutralization</h3>
+                        <span class="step-status" id="status-0">Pending</span>
+                    </div>
+                    <div class="step-body">
+                        <p><strong>Reaction:</strong> LABSA (Linear Alkyl Benzene Sulphonic Acid) reacts with
+                        Na₂CO₃ (Sodium Carbonate) to produce the detergent base — a sodium salt of the sulphonate.</p>
+                        <p><strong>Chemical Equation:</strong></p>
+                        <div class="equation">C₁₂H₂₅C₆H₄SO₃H + Na₂CO₃ → C₁₂H₂₅C₆H₄SO₃Na + H₂O + CO₂↑</div>
+                        <div class="animation-area" id="anim-0">
+                            <div class="beaker beaker-left">
+                                <div class="beaker-label">LABSA</div>
+                                <div class="beaker-liquid liquid-yellow"></div>
+                            </div>
+                            <div class="plus-sign">+</div>
+                            <div class="beaker beaker-right">
+                                <div class="beaker-label">Na₂CO₃</div>
+                                <div class="beaker-liquid liquid-white"></div>
+                            </div>
+                            <div class="reaction-arrow">→</div>
+                            <div class="beaker beaker-result">
+                                <div class="beaker-label">Product</div>
+                                <div class="beaker-liquid liquid-green"></div>
+                                <div class="reaction-bubbles">
+                                    <span class="r-bubble"></span>
+                                    <span class="r-bubble"></span>
+                                    <span class="r-bubble"></span>
+                                    <span class="r-bubble"></span>
+                                    <span class="r-bubble"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-perform" id="btn-0" onclick="performStep(0)">
+                        <i class="fas fa-play"></i> Perform Neutralization
+                    </button>
+                </div>
+
+                <!-- Step 2: Mixing -->
+                <div class="step-card locked" id="step-1" data-step="1">
+                    <div class="step-badge">Step 2</div>
+                    <div class="step-header">
+                        <h3><i class="fas fa-blender"></i> Mixing</h3>
+                        <span class="step-status" id="status-1">Locked</span>
+                    </div>
+                    <div class="step-body">
+                        <p>The neutralized slurry is mixed thoroughly using industrial mixers to ensure
+                        uniform consistency and even distribution of all components.</p>
+                        <div class="animation-area" id="anim-1">
+                            <div class="mixer-container">
+                                <div class="mixer-bowl">
+                                    <div class="mixer-liquid"></div>
+                                    <div class="mixer-blade" id="mixerBlade">
+                                        <div class="blade"></div>
+                                        <div class="blade blade-2"></div>
+                                    </div>
+                                </div>
+                                <div class="mixer-stand"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-perform" id="btn-1" onclick="performStep(1)" disabled>
+                        <i class="fas fa-lock"></i> Complete Previous Step First
+                    </button>
+                </div>
+
+                <!-- Step 3: Additives -->
+                <div class="step-card locked" id="step-2" data-step="2">
+                    <div class="step-badge">Step 3</div>
+                    <div class="step-header">
+                        <h3><i class="fas fa-plus-circle"></i> Additives</h3>
+                        <span class="step-status" id="status-2">Locked</span>
+                    </div>
+                    <div class="step-body">
+                        <p>Essential additives are introduced to enhance cleaning performance:</p>
+                        <ul class="additive-list">
+                            <li><i class="fas fa-check-circle"></i> <strong>Builders</strong> — Sodium tripolyphosphate (softens water)</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Enzymes</strong> — Break down protein-based stains</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Fragrance</strong> — Pleasant scent for the final product</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Optical Brighteners</strong> — Make fabrics appear whiter</li>
+                            <li><i class="fas fa-check-circle"></i> <strong>Colourants</strong> — Blue speckles for visual appeal</li>
+                        </ul>
+                        <div class="animation-area" id="anim-2">
+                            <div class="additives-container">
+                                <div class="additive-bottle" id="addBottle1"><i class="fas fa-prescription-bottle"></i><span>Builders</span></div>
+                                <div class="additive-bottle" id="addBottle2"><i class="fas fa-prescription-bottle-alt"></i><span>Enzymes</span></div>
+                                <div class="additive-bottle" id="addBottle3"><i class="fas fa-spray-can"></i><span>Fragrance</span></div>
+                                <div class="additive-bottle" id="addBottle4"><i class="fas fa-sun"></i><span>Brighteners</span></div>
+                                <div class="main-vat">
+                                    <div class="vat-liquid"></div>
+                                    <div class="vat-label">Mixing Vat</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-perform" id="btn-2" onclick="performStep(2)" disabled>
+                        <i class="fas fa-lock"></i> Complete Previous Step First
+                    </button>
+                </div>
+
+                <!-- Step 4: Drying -->
+                <div class="step-card locked" id="step-3" data-step="3">
+                    <div class="step-badge">Step 4</div>
+                    <div class="step-header">
+                        <h3><i class="fas fa-wind"></i> Drying</h3>
+                        <span class="step-status" id="status-3">Locked</span>
+                    </div>
+                    <div class="step-body">
+                        <p>The wet mixture is spray-dried in a tall drying tower. Hot air evaporates
+                        moisture, leaving behind free-flowing powder granules.</p>
+                        <div class="animation-area" id="anim-3">
+                            <div class="dryer-container">
+                                <div class="dryer-tower">
+                                    <div class="dryer-top"><i class="fas fa-shower"></i></div>
+                                    <div class="spray-particles">
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                        <span class="particle"></span>
+                                    </div>
+                                    <div class="hot-air">
+                                        <i class="fas fa-wind"></i>
+                                        <i class="fas fa-wind"></i>
+                                        <i class="fas fa-wind"></i>
+                                    </div>
+                                    <div class="dryer-bottom">
+                                        <div class="powder-pile"></div>
+                                    </div>
+                                </div>
+                                <div class="temp-indicator">
+                                    <i class="fas fa-temperature-high"></i> 300 °C
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-perform" id="btn-3" onclick="performStep(3)" disabled>
+                        <i class="fas fa-lock"></i> Complete Previous Step First
+                    </button>
+                </div>
+
+                <!-- Step 5: Packaging -->
+                <div class="step-card locked" id="step-4" data-step="4">
+                    <div class="step-badge">Step 5</div>
+                    <div class="step-header">
+                        <h3><i class="fas fa-box"></i> Packaging</h3>
+                        <span class="step-status" id="status-4">Locked</span>
+                    </div>
+                    <div class="step-body">
+                        <p>The dried detergent powder is weighed, quality-checked, and sealed
+                        into consumer-ready packaging with branding and labelling.</p>
+                        <div class="animation-area" id="anim-4">
+                            <div class="packaging-container">
+                                <div class="conveyor">
+                                    <div class="conveyor-belt"></div>
+                                    <div class="package-box" id="pkgBox">
+                                        <i class="fas fa-box-open"></i>
+                                        <span>Detergent<br>Powder</span>
+                                    </div>
+                                </div>
+                                <div class="seal-stamp" id="sealStamp">
+                                    <i class="fas fa-stamp"></i>
+                                    <span>SEALED</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-perform" id="btn-4" onclick="performStep(4)" disabled>
+                        <i class="fas fa-lock"></i> Complete Previous Step First
+                    </button>
+                </div>
+            </div>
+
+            <!-- Completion Panel (hidden initially) -->
+            <div class="completion-panel" id="completionPanel" style="display:none;">
+                <div class="completion-content">
+                    <div class="completion-icon"><i class="fas fa-award"></i></div>
+                    <h2>Experiment Completed!</h2>
+                    <p>Congratulations! You have successfully completed all 5 steps of the detergent manufacturing process.</p>
+                    <div class="certificate" id="certificate">
+                        <div class="cert-border">
+                            <div class="cert-header">
+                                <i class="fas fa-medal"></i>
+                                <h3>Certificate of Completion</h3>
+                            </div>
+                            <p>This is to certify that</p>
+                            <h2 class="cert-name" id="certName">Student Name</h2>
+                            <p>has successfully completed the</p>
+                            <h3>Virtual Lab: Detergent Making Practical</h3>
+                            <p class="cert-date" id="certDate"></p>
+                            <div class="cert-stamp"><i class="fas fa-check-circle"></i> Verified</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="restartExperiment()">
+                        <i class="fas fa-redo"></i> Restart Experiment
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Virtual Lab: Detergent Making Practical</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

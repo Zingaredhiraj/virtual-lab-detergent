@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — Virtual Lab</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-flask"></i> Virtual Lab
+        </div>
+        <ul class="nav-links">
+            <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/lab"><i class="fas fa-vial"></i> Lab</a></li>
+            <li><a href="/admin" class="active"><i class="fas fa-user-shield"></i> Admin</a></li>
+        </ul>
+    </nav>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h1>
+            <p>Monitor student progress across all experiments</p>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 id="totalStudents">{{ records|length }}</h3>
+                    <p>Total Students</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon completed-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-info">
+                    <h3 id="completedCount">
+                        {% set completed = [] %}
+                        {% for r in records %}
+                            {% if r['step_completed'] == 'Packaging' %}
+                                {% if completed.append(1) %}{% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ completed|length }}
+                    </h3>
+                    <p>Completed</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon inprogress-icon"><i class="fas fa-spinner"></i></div>
+                <div class="stat-info">
+                    <h3 id="inProgressCount">
+                        {% set inprogress = [] %}
+                        {% for r in records %}
+                            {% if r['step_completed'] != 'Packaging' %}
+                                {% if inprogress.append(1) %}{% endif %}
+                            {% endif %}
+                        {% endfor %}
+                        {{ inprogress|length }}
+                    </h3>
+                    <p>In Progress</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Records Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h3><i class="fas fa-table"></i> Student Records</h3>
+                <button class="btn btn-sm" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+
+            {% if records|length == 0 %}
+            <div class="empty-state">
+                <i class="fas fa-inbox"></i>
+                <h3>No Records Yet</h3>
+                <p>Student experiment data will appear here once they start using the virtual lab.</p>
+                <a href="/lab" class="btn btn-primary"><i class="fas fa-vial"></i> Go to Lab</a>
+            </div>
+            {% else %}
+            <div class="table-responsive">
+                <table class="data-table" id="recordsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)">ID <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(1)">Name <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(2)">Class <i class="fas fa-sort"></i></th>
+                            <th onclick="sortTable(3)">Step Completed <i class="fas fa-sort"></i></th>
+                            <th>Progress</th>
+                            <th onclick="sortTable(5)">Timestamp <i class="fas fa-sort"></i></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for record in records %}
+                        <tr>
+                            <td>{{ record['id'] }}</td>
+                            <td><strong>{{ record['name'] }}</strong></td>
+                            <td>{{ record['class'] }}</td>
+                            <td>
+                                <span class="step-badge-sm
+                                    {% if record['step_completed'] == 'Packaging' %} badge-complete
+                                    {% elif record['step_completed'] == 'Drying' %} badge-almost
+                                    {% else %} badge-progress
+                                    {% endif %}">
+                                    {{ record['step_completed'] }}
+                                </span>
+                            </td>
+                            <td>
+                                {% set steps_map = {'Neutralization': 20, 'Mixing': 40, 'Additives': 60, 'Drying': 80, 'Packaging': 100} %}
+                                {% set pct = steps_map.get(record['step_completed'], 0) %}
+                                <div class="mini-progress">
+                                    <div class="mini-progress-bar" style="width:{{ pct }}%;">{{ pct }}%</div>
+                                </div>
+                            </td>
+                            <td>{{ record['timestamp'] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Virtual Lab: Detergent Making Practical</p>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * Sort the records table by clicking column headers.
+         * Uses simple DOM-based sorting — toggles ascending/descending.
+         */
+        let sortDirection = {};
+
+        function sortTable(columnIndex) {
+            const table = document.getElementById('recordsTable');
+            if (!table) return;
+
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+
+            // Toggle direction
+            sortDirection[columnIndex] = !sortDirection[columnIndex];
+            const dir = sortDirection[columnIndex] ? 1 : -1;
+
+            rows.sort((a, b) => {
+                const aText = a.cells[columnIndex].textContent.trim();
+                const bText = b.cells[columnIndex].textContent.trim();
+
+                // Try numeric comparison first
+                const aNum = parseFloat(aText);
+                const bNum = parseFloat(bText);
+                if (!isNaN(aNum) && !isNaN(bNum)) {
+                    return (aNum - bNum) * dir;
+                }
+                return aText.localeCompare(bText) * dir;
+            });
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+    </script>
+</body>
+</html>

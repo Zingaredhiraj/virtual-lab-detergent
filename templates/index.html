@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Lab: Detergent Making Practical</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <i class="fas fa-flask"></i> Virtual Lab
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="active"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="/lab"><i class="fas fa-vial"></i> Lab</a></li>
+            <li><a href="/admin"><i class="fas fa-user-shield"></i> Admin</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-icon">
+                <i class="fas fa-flask"></i>
+            </div>
+            <h1>Virtual Lab: Detergent Making Practical</h1>
+            <p class="hero-subtitle">
+                An interactive simulation of the detergent manufacturing process.
+                Learn each step — from neutralization to packaging — in a safe, virtual environment.
+            </p>
+            <a href="/lab" class="btn btn-primary btn-lg">
+                <i class="fas fa-play-circle"></i> Start Experiment
+            </a>
+        </div>
+        <!-- Floating bubbles animation -->
+        <div class="bubbles">
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section" id="about">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-info-circle"></i> About This Project</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-microscope"></i></div>
+                    <h3>Virtual Simulation</h3>
+                    <p>Experience a realistic detergent manufacturing process through interactive step-by-step simulation with animations.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-cogs"></i></div>
+                    <h3>Process Flow</h3>
+                    <p>Visualize the complete manufacturing pipeline from raw materials to the final packaged product.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Track Progress</h3>
+                    <p>Save your experiment progress and track completion status through the integrated dashboard.</p>
+                </div>
+                <div class="about-card">
+                    <div class="about-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>Educational</h3>
+                    <p>Designed for college practical demonstrations with detailed explanations at each manufacturing step.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Experiment Steps Overview -->
+    <section class="section section-alt" id="steps">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-list-ol"></i> Experiment Steps</h2>
+            <div class="steps-overview">
+                <div class="step-overview-card">
+                    <div class="step-number">1</div>
+                    <h3>Neutralization</h3>
+                    <p>LABSA reacts with Na₂CO₃ to form the detergent base (sodium salt).</p>
+                </div>
+                <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="step-overview-card">
+                    <div class="step-number">2</div>
+                    <h3>Mixing</h3>
+                    <p>Thorough blending of the neutralized slurry to ensure uniform consistency.</p>
+                </div>
+                <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="step-overview-card">
+                    <div class="step-number">3</div>
+                    <h3>Additives</h3>
+                    <p>Builders, enzymes, fragrances, and optical brighteners are added.</p>
+                </div>
+                <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="step-overview-card">
+                    <div class="step-number">4</div>
+                    <h3>Drying</h3>
+                    <p>Spray drying converts the slurry into free-flowing powder granules.</p>
+                </div>
+                <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+                <div class="step-overview-card">
+                    <div class="step-number">5</div>
+                    <h3>Packaging</h3>
+                    <p>The finished detergent powder is weighed and sealed in packaging.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="section" id="team">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-users"></i> Team Members</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                    <h3>Dhiraj Zingare</h3>
+                    <p class="team-role">Project Lead &amp; Developer</p>
+                    <p class="team-desc">Full-stack development, system design, and project coordination.</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                    <h3>Team Member 2</h3>
+                    <p class="team-role">Frontend Developer</p>
+                    <p class="team-desc">UI/UX design, animations, and responsive layouts.</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                    <h3>Team Member 3</h3>
+                    <p class="team-role">Backend Developer</p>
+                    <p class="team-desc">Flask API development, database management, and testing.</p>
+                </div>
+                <div class="team-card">
+                    <div class="team-avatar"><i class="fas fa-user-graduate"></i></div>
+                    <h3>Team Member 4</h3>
+                    <p class="team-role">Research &amp; Documentation</p>
+                    <p class="team-desc">Experiment research, content writing, and documentation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Virtual Lab: Detergent Making Practical. All rights reserved.</p>
+            <p class="footer-sub">Built with <i class="fas fa-heart" style="color:#e74c3c;"></i> using Flask &amp; JavaScript</p>
+        </div>
+    </footer>
+</body>
+</html>
