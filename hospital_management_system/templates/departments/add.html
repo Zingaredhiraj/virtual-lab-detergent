@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Add Department - MediCore HMS{% endblock %}
+{% block page_title %}Add Department{% endblock %}
+{% block page_subtitle %}Create a new department{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-building"></i> Add New Department</h3>
+        <a href="{{ url_for('departments.list_departments') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="form-grid">
+            <div class="form-group full-width">
+                <label for="name">Department Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" required placeholder="e.g., Cardiology">
+            </div>
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Department</button>
+                <a href="{{ url_for('departments.list_departments') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

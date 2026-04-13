@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Patients - MediCore HMS{% endblock %}
+{% block page_title %}Patients{% endblock %}
+{% block page_subtitle %}Manage all registered patients{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-title">
+        <h2>Patient Registry</h2>
+        <p>Manage all registered patients</p>
+    </div>
+    <div class="module-actions">
+        <a href="{{ url_for('patients.add') }}" class="btn btn-primary">+ Add Patient</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="search-filter-bar">
+            <form class="search-box" method="GET" action="{{ url_for('patients.list_patients') }}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search patients..." value="{{ search }}">
+                <input type="hidden" name="sort_by" value="{{ sort_by }}">
+                <input type="hidden" name="sort_order" value="{{ sort_order }}">
+            </form>
+            <div class="filter-pills">
+                <a href="{{ url_for('patients.list_patients') }}" class="filter-pill {% if not search %}active{% endif %}">All</a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th><a href="?sort_by=patient_id&sort_order={{ 'DESC' if sort_by == 'patient_id' and sort_order == 'ASC' else 'ASC' }}&search={{ search }}" class="sort-link">Patient ID <i class="fas fa-sort"></i></a></th>
+                        <th><a href="?sort_by=name&sort_order={{ 'DESC' if sort_by == 'name' and sort_order == 'ASC' else 'ASC' }}&search={{ search }}" class="sort-link">Name <i class="fas fa-sort"></i></a></th>
+                        <th>Age / Gender</th>
+                        <th>Phone</th>
+                        <th>Appointments</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set colors = ['avatar-blue', 'avatar-purple', 'avatar-green', 'avatar-orange', 'avatar-teal', 'avatar-pink'] %}
+                    {% for patient in patients %}
+                    <tr>
+                        <td><span class="badge">P{{ "%03d"|format(patient.patient_id) }}</span></td>
+                        <td>
+                            <span class="patient-initials {{ colors[loop.index0 % 6] }}">{{ patient.name[0]|upper }}{{ patient.name.split()[1][0]|upper if patient.name.split()|length > 1 else '' }}</span>
+                            <strong>{{ patient.name }}</strong>
+                            {% if patient.medical_history %}<br><small style="color: var(--text-muted); margin-left: 40px;">{{ patient.medical_history[:30] }}{% if patient.medical_history|length > 30 %}...{% endif %}</small>{% endif %}
+                        </td>
+                        <td>{{ patient.age }} / {{ patient.gender }}</td>
+                        <td>{{ patient.contact or 'N/A' }}</td>
+                        <td><span class="badge">{{ patient.total_appointments }}</span></td>
+                        <td><span class="status-badge status-active">Active</span></td>
+                        <td class="actions">
+                            <a href="{{ url_for('patients.view', patient_id=patient.patient_id) }}" class="btn-icon view" title="View"><i class="fas fa-eye"></i></a>
+                            <a href="{{ url_for('patients.edit', patient_id=patient.patient_id) }}" class="btn-icon edit" title="Edit"><i class="fas fa-edit"></i></a>
+                            {% if session.get('role') == 'Admin' %}
+                            <form method="POST" action="{{ url_for('patients.delete', patient_id=patient.patient_id) }}" style="display:inline" onsubmit="return confirm('Delete this patient?')">
+                                <button type="submit" class="btn-icon delete" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="text-center" style="color: var(--text-muted); padding: 40px;">No patients found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}<a href="?page={{ page-1 }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm btn-outline">&laquo; Previous</a>{% endif %}
+            {% for p in range(1, total_pages+1) %}
+            <a href="?page={{ p }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-outline{% endif %}">{{ p }}</a>
+            {% endfor %}
+            {% if page < total_pages %}<a href="?page={{ page+1 }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm btn-outline">Next &raquo;</a>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

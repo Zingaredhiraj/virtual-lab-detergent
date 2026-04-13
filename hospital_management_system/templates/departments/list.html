@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Departments - MediCore HMS{% endblock %}
+{% block page_title %}Departments{% endblock %}
+{% block page_subtitle %}Manage hospital departments{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-title">
+        <h2>Department Management</h2>
+        <p>View and manage departments</p>
+    </div>
+    <div class="module-actions">
+        <a href="{{ url_for('departments.add') }}" class="btn btn-primary">+ Add Department</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="search-filter-bar">
+            <form class="search-box" method="GET" action="{{ url_for('departments.list_departments') }}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search departments..." value="{{ search }}">
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Department ID</th>
+                        <th>Name</th>
+                        <th>Doctors</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dept in departments %}
+                    <tr>
+                        <td><span class="badge">D{{ "%03d"|format(dept.department_id) }}</span></td>
+                        <td><strong>{{ dept.name }}</strong></td>
+                        <td><span class="badge">{{ dept.doctor_count }}</span></td>
+                        <td class="actions">
+                            <a href="{{ url_for('departments.edit', department_id=dept.department_id) }}" class="btn-icon edit" title="Edit"><i class="fas fa-edit"></i></a>
+                            {% if session.get('role') == 'Admin' %}
+                            <form method="POST" action="{{ url_for('departments.delete', department_id=dept.department_id) }}" style="display:inline" onsubmit="return confirm('Delete this department?')">
+                                <button type="submit" class="btn-icon delete" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" class="text-center" style="color: var(--text-muted); padding: 40px;">No departments found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

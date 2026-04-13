@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Doctors - MediCore HMS{% endblock %}
+{% block page_title %}Doctors{% endblock %}
+{% block page_subtitle %}View and manage medical staff{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-title">
+        <h2>Medical Staff</h2>
+        <p>Manage doctors and specialists</p>
+    </div>
+    <div class="module-actions">
+        {% if session.get('role') == 'Admin' %}
+        <a href="{{ url_for('doctors.add') }}" class="btn btn-primary">+ Add Doctor</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="search-filter-bar">
+            <form class="search-box" method="GET" action="{{ url_for('doctors.list_doctors') }}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search doctors..." value="{{ search }}">
+            </form>
+            <div class="filter-pills">
+                <a href="{{ url_for('doctors.list_doctors') }}" class="filter-pill active">All</a>
+            </div>
+        </div>
+
+        {% set colors = ['avatar-blue', 'avatar-purple', 'avatar-red', 'avatar-green', 'avatar-orange', 'avatar-teal', 'avatar-pink', 'avatar-yellow'] %}
+        {% set tag_colors = ['tag-blue', 'tag-purple', 'tag-green', 'tag-orange', 'tag-teal', 'tag-pink'] %}
+        <div class="doctor-grid">
+            {% for doctor in doctors %}
+            <div class="doctor-card">
+                <div class="doctor-avatar {{ colors[loop.index0 % 8] }}">{{ doctor.name.split()[-1][0]|upper }}{{ doctor.name.split()[0][0]|upper }}</div>
+                <h4>{{ doctor.name }}</h4>
+                <div class="doctor-spec">{{ doctor.specialization }}</div>
+                <div class="doctor-tags">
+                    <span class="doctor-tag {{ tag_colors[loop.index0 % 6] }}">{{ doctor.department_name or 'General' }}</span>
+                    <span class="doctor-tag" style="background: rgba(255,255,255,0.06); color: var(--text-light);">{{ doctor.schedule or 'Mon-Fri' }}</span>
+                </div>
+                <div class="doctor-contact">📞 {{ doctor.contact or 'N/A' }}</div>
+                <div class="doctor-fee">Appointments: {{ doctor.total_appointments }}</div>
+                <div class="doctor-actions">
+                    {% if session.get('role') == 'Admin' %}
+                    <a href="{{ url_for('doctors.edit', doctor_id=doctor.doctor_id) }}" class="btn-edit">Edit</a>
+                    <form method="POST" action="{{ url_for('doctors.delete', doctor_id=doctor.doctor_id) }}" style="display:inline" onsubmit="return confirm('Delete this doctor?')">
+                        <button type="submit" class="btn-del" title="Delete"><i class="fas fa-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted); padding: 40px; text-align: center; grid-column: 1/-1;">No doctors found</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Appointments - MediCore HMS{% endblock %}
+{% block page_title %}Appointments{% endblock %}
+{% block page_subtitle %}Schedule and manage appointments{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-title">
+        <h2>Appointment Manager</h2>
+        <p>Schedule and track appointments</p>
+    </div>
+    <div class="module-actions">
+        <a href="{{ url_for('appointments.add') }}" class="btn btn-primary">+ New Appointment</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="search-filter-bar">
+            <form class="search-box" method="GET" action="{{ url_for('appointments.list_appointments') }}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search appointments..." value="{{ search }}">
+                <input type="hidden" name="status" value="{{ status_filter }}">
+            </form>
+            <div class="filter-pills">
+                <a href="{{ url_for('appointments.list_appointments', search=search) }}" class="filter-pill {% if not status_filter %}active{% endif %}">All</a>
+                <a href="{{ url_for('appointments.list_appointments', status='Confirmed', search=search) }}" class="filter-pill {% if status_filter == 'Confirmed' %}active{% endif %}">Confirmed</a>
+                <a href="{{ url_for('appointments.list_appointments', status='Completed', search=search) }}" class="filter-pill {% if status_filter == 'Completed' %}active{% endif %}">Completed</a>
+                <a href="{{ url_for('appointments.list_appointments', status='Cancelled', search=search) }}" class="filter-pill {% if status_filter == 'Cancelled' %}active{% endif %}">Cancelled</a>
+                <a href="{{ url_for('appointments.list_appointments', status='Pending', search=search) }}" class="filter-pill {% if status_filter == 'Pending' %}active{% endif %}">Pending</a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Patient</th>
+                        <th>Doctor</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for apt in appointments %}
+                    <tr>
+                        <td><span class="badge">A{{ "%03d"|format(apt.appointment_id) }}</span></td>
+                        <td><strong>{{ apt.patient_name }}</strong></td>
+                        <td>{{ apt.doctor_name }}</td>
+                        <td>{{ apt.appointment_date.strftime('%d %b %Y') if apt.appointment_date else 'N/A' }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('appointments.update_status', appointment_id=apt.appointment_id) }}" class="inline-form">
+                                <select name="status" onchange="this.form.submit()" class="status-select status-{{ apt.status|lower }}">
+                                    <option value="Pending" {% if apt.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Confirmed" {% if apt.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+                                    <option value="Completed" {% if apt.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                    <option value="Cancelled" {% if apt.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </form>
+                        </td>
+                        <td class="actions">
+                            {% if apt.status == 'Completed' %}
+                            <a href="{{ url_for('bills.add') }}?patient_id={{ apt.patient_id }}" class="btn-icon view" title="Generate Bill"><i class="fas fa-file-invoice-dollar"></i></a>
+                            {% endif %}
+                            <a href="{{ url_for('appointments.edit', appointment_id=apt.appointment_id) }}" class="btn-icon edit" title="Edit"><i class="fas fa-edit"></i></a>
+                            {% if session.get('role') == 'Admin' %}
+                            <form method="POST" action="{{ url_for('appointments.delete', appointment_id=apt.appointment_id) }}" style="display:inline" onsubmit="return confirm('Delete this appointment?')">
+                                <button type="submit" class="btn-icon delete" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center" style="color: var(--text-muted); padding: 40px;">No appointments found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}<a href="?page={{ page-1 }}&search={{ search }}&status={{ status_filter }}" class="btn btn-sm btn-outline">&laquo; Previous</a>{% endif %}
+            {% for p in range(1, total_pages+1) %}
+            <a href="?page={{ p }}&search={{ search }}&status={{ status_filter }}" class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-outline{% endif %}">{{ p }}</a>
+            {% endfor %}
+            {% if page < total_pages %}<a href="?page={{ page+1 }}&search={{ search }}&status={{ status_filter }}" class="btn btn-sm btn-outline">Next &raquo;</a>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

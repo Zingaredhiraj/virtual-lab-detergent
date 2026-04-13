@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% block title %}Dashboard - MediCore HMS{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block page_subtitle %}Welcome back — hospital overview at a glance{% endblock %}
+
+{% block content %}
+<!-- Stats Cards -->
+<div class="stats-grid">
+    <div class="stat-card stat-patients">
+        <div class="stat-info">
+            <p>Total Patients</p>
+            <h3>{{ total_patients }}</h3>
+            <div class="stat-trend">↑ 12% this month</div>
+        </div>
+        <div class="stat-icon"><i class="fas fa-user-injured"></i></div>
+    </div>
+    <div class="stat-card stat-doctors">
+        <div class="stat-info">
+            <p>Active Doctors</p>
+            <h3>{{ total_doctors }}</h3>
+            <div class="stat-trend">↑ {{ total_doctors }} on staff</div>
+        </div>
+        <div class="stat-icon"><i class="fas fa-user-md"></i></div>
+    </div>
+    <div class="stat-card stat-appointments">
+        <div class="stat-info">
+            <p>Appointments</p>
+            <h3>{{ total_appointments }}</h3>
+            <div class="stat-trend">↑ 8% this week</div>
+        </div>
+        <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+    </div>
+    <div class="stat-card stat-revenue">
+        <div class="stat-info">
+            <p>Total Revenue</p>
+            <h3>₹{{ "%.0f"|format(total_revenue) }}</h3>
+            <div class="stat-trend">↑ 18% this month</div>
+        </div>
+        <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <a href="{{ url_for('appointments.add') }}" class="quick-action-btn">
+        <span class="qa-icon">📅</span>
+        <span class="qa-label">New Appointment</span>
+    </a>
+    <a href="{{ url_for('patients.add') }}" class="quick-action-btn">
+        <span class="qa-icon">➕</span>
+        <span class="qa-label">Add Patient</span>
+    </a>
+    <a href="{{ url_for('doctors.add') }}" class="quick-action-btn">
+        <span class="qa-icon">👨‍⚕️</span>
+        <span class="qa-label">Add Doctor</span>
+    </a>
+    <a href="{{ url_for('bills.add') }}" class="quick-action-btn">
+        <span class="qa-icon">💳</span>
+        <span class="qa-label">Generate Bill</span>
+    </a>
+</div>
+
+<!-- Charts Row -->
+<div class="dashboard-row">
+    <!-- Appointments Overview -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h3>Appointments Overview</h3>
+                <div class="card-subtitle">Status breakdown</div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="status-bars">
+                {% set total = appointment_status|sum(attribute='count') if appointment_status else 1 %}
+                {% for status in appointment_status %}
+                <div class="status-bar-item">
+                    <div class="status-label">
+                        <span>{{ status.status }}</span>
+                        <span class="status-count">{{ status.count }}</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill status-{{ status.status|lower }}" style="width: {{ (status.count / total * 100)|int }}%"></div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Billing Summary -->
+    <div class="card">
+        <div class="card-header">
+            <div>
+                <h3>Revenue Analytics</h3>
+                <div class="card-subtitle">Payment breakdown</div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="billing-summary">
+                {% for item in billing_summary %}
+                <div class="billing-item">
+                    <span class="status-badge payment-{{ item.payment_status|lower }}">{{ item.payment_status }}</span>
+                    <span class="billing-count">{{ item.total_bills }} bills · Avg: ₹{{ "%.0f"|format(item.avg_amount) }}</span>
+                    <span class="billing-amount">₹{{ "%.0f"|format(item.total_amount) }}</span>
+                </div>
+                {% else %}
+                <p style="color: var(--text-muted);">No billing data available</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom Row -->
+<div class="dashboard-row">
+    <!-- Recent Appointments -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Recent Appointments</h3>
+            <a href="{{ url_for('appointments.list_appointments') }}" class="btn btn-sm btn-outline">View All</a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for apt in recent_appointments %}
+                        <tr>
+                            <td><strong>{{ apt.patient_name }}</strong></td>
+                            <td>{{ apt.doctor_name }}</td>
+                            <td>{{ apt.appointment_date.strftime('%Y-%m-%d') if apt.appointment_date else 'N/A' }}</td>
+                            <td><span class="status-badge status-{{ apt.status|lower }}">{{ apt.status }}</span></td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center" style="color: var(--text-muted);">No recent appointments</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Department Distribution -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Department Distribution</h3>
+        </div>
+        <div class="card-body">
+            <div class="dept-grid">
+                {% for dept in dept_doctors %}
+                <div class="dept-item">
+                    <div class="dept-name">{{ dept.department }}</div>
+                    <div class="dept-count">{{ dept.doctor_count }} doctors</div>
+                </div>
+                {% else %}
+                <p style="color: var(--text-muted);">No departments found</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

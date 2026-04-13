@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Generate Bill - MediCore HMS{% endblock %}
+{% block page_title %}Generate Bill{% endblock %}
+{% block page_subtitle %}Create a new invoice{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Generate New Bill</h3>
+        <a href="{{ url_for('bills.list_bills') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="form-grid">
+            <div class="form-group">
+                <label for="patient_id">Patient <span class="required">*</span></label>
+                <select id="patient_id" name="patient_id" required>
+                    <option value="">Select Patient</option>
+                    {% for patient in patients %}
+                    <option value="{{ patient.patient_id }}" {% if request.args.get('patient_id')|int == patient.patient_id %}selected{% endif %}>{{ patient.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount (₹) <span class="required">*</span></label>
+                <input type="number" id="amount" name="amount" step="0.01" min="0" required placeholder="0.00">
+            </div>
+            <div class="form-group">
+                <label for="payment_status">Payment Status</label>
+                <select id="payment_status" name="payment_status">
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Partial">Partial</option>
+                </select>
+            </div>
+            <div class="form-group full-width">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="3" placeholder="Bill details, services provided..."></textarea>
+            </div>
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Generate Bill</button>
+                <a href="{{ url_for('bills.list_bills') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

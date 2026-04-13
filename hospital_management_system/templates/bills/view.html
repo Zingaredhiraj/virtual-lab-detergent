@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Bill #{{ bill.bill_id }} - MediCore HMS{% endblock %}
+{% block page_title %}Bill Details{% endblock %}
+{% block page_subtitle %}Invoice #{{ bill.bill_id }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Bill #{{ bill.bill_id }}</h3>
+        <div>
+            <a href="{{ url_for('bills.edit', bill_id=bill.bill_id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
+            <a href="{{ url_for('bills.list_bills') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="detail-grid">
+            <div class="detail-item"><strong>Bill ID</strong> #{{ bill.bill_id }}</div>
+            <div class="detail-item"><strong>Patient</strong> {{ bill.patient_name }}</div>
+            <div class="detail-item"><strong>Amount</strong> ₹{{ "%.2f"|format(bill.amount) }}</div>
+            <div class="detail-item"><strong>Status</strong> <span class="status-badge payment-{{ bill.payment_status|lower }}">{{ bill.payment_status }}</span></div>
+            <div class="detail-item"><strong>Date</strong> {{ bill.created_at }}</div>
+            <div class="detail-item full-width"><strong>Description</strong> {{ bill.description or 'No description' }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

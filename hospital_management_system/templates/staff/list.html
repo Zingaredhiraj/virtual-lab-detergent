@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Staff - MediCore HMS{% endblock %}
+{% block page_title %}Staff{% endblock %}
+{% block page_subtitle %}Manage hospital staff{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-title">
+        <h2>Staff Management</h2>
+        <p>View and manage hospital staff</p>
+    </div>
+    <div class="module-actions">
+        <a href="{{ url_for('staff.add') }}" class="btn btn-primary">+ Add Staff</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="search-filter-bar">
+            <form class="search-box" method="GET" action="{{ url_for('staff.list_staff') }}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search staff..." value="{{ search }}">
+            </form>
+        </div>
+
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Staff ID</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% set colors = ['avatar-blue', 'avatar-purple', 'avatar-green', 'avatar-orange', 'avatar-teal', 'avatar-pink'] %}
+                    {% for member in staff_members %}
+                    <tr>
+                        <td><span class="badge">S{{ "%03d"|format(member.staff_id) }}</span></td>
+                        <td>
+                            <span class="patient-initials {{ colors[loop.index0 % 6] }}">{{ member.name[0]|upper }}</span>
+                            <strong>{{ member.name }}</strong>
+                        </td>
+                        <td><span class="status-badge status-active">{{ member.role }}</span></td>
+                        <td>{{ member.contact or 'N/A' }}</td>
+                        <td>{{ member.email or 'N/A' }}</td>
+                        <td class="actions">
+                            <a href="{{ url_for('staff.edit', staff_id=member.staff_id) }}" class="btn-icon edit" title="Edit"><i class="fas fa-edit"></i></a>
+                            {% if session.get('role') == 'Admin' %}
+                            <form method="POST" action="{{ url_for('staff.delete', staff_id=member.staff_id) }}" style="display:inline" onsubmit="return confirm('Delete this staff member?')">
+                                <button type="submit" class="btn-icon delete" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="6" class="text-center" style="color: var(--text-muted); padding: 40px;">No staff found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
