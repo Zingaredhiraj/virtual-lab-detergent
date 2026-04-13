@@ -40,8 +40,8 @@ def list_bills():
         for row in summary:
             billing_summary_list.append({
                 'payment_status': row['payment_status'],
-                'total_bills': row['count'],
-                'total_amount': float(row['total']),
+                'total_bills': row['total_bills'],
+                'total_amount': float(row['total_amount']),
             })
 
     return render_template('bills/list.html',
