@@ -1,27 +1,28 @@
 {% extends "base.html" %}
-{% block title %}Prescriptions - HMS{% endblock %}
-{% block page_title %}Prescription Management{% endblock %}
+{% block title %}Prescriptions - MediCore HMS{% endblock %}
+{% block page_title %}Prescriptions{% endblock %}
+{% block page_subtitle %}Manage medical prescriptions{% endblock %}
 
 {% block content %}
 <div class="module-header">
-    <div class="module-actions">
-        {% if session.get('role') in ['Admin', 'Doctor'] %}
-        <a href="{{ url_for('prescriptions.add') }}" class="btn btn-primary"><i class="fas fa-plus"></i> New Prescription</a>
-        {% endif %}
+    <div class="module-title">
+        <h2>Prescription Records</h2>
+        <p>View and manage prescriptions</p>
     </div>
-    <form class="search-form" method="GET" action="{{ url_for('prescriptions.list_prescriptions') }}">
-        <div class="search-box">
-            <input type="text" name="search" placeholder="Search by patient, doctor, medicine..." value="{{ search }}">
-            <button type="submit"><i class="fas fa-search"></i></button>
-        </div>
-    </form>
+    <div class="module-actions">
+        <a href="{{ url_for('prescriptions.add') }}" class="btn btn-primary">+ Add Prescription</a>
+    </div>
 </div>
 
 <div class="card">
-    <div class="card-header">
-        <h3><i class="fas fa-prescription"></i> Prescriptions ({{ total }} records)</h3>
-    </div>
     <div class="card-body">
+        <div class="search-filter-bar">
+            <form class="search-box" method="GET" action="{{ url_for('prescriptions.list_prescriptions') }}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search prescriptions..." value="{{ search }}">
+            </form>
+        </div>
+
         <div class="table-responsive">
             <table class="data-table">
                 <thead>
@@ -31,44 +32,42 @@
                         <th>Doctor</th>
                         <th>Medicines</th>
                         <th>Dosage</th>
-                        <th><a href="?sort_by=prescribed_date&sort_order={{ 'ASC' if sort_by == 'prescribed_date' and sort_order == 'DESC' else 'DESC' }}&search={{ search }}" class="sort-link">Date <i class="fas fa-sort"></i></a></th>
+                        <th>Date</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for pres in prescriptions %}
                     <tr>
-                        <td>{{ pres.prescription_id }}</td>
+                        <td><span class="badge">RX{{ "%03d"|format(pres.prescription_id) }}</span></td>
                         <td><strong>{{ pres.patient_name }}</strong></td>
                         <td>{{ pres.doctor_name }}</td>
-                        <td>{{ pres.medicines[:50] }}{% if pres.medicines|length > 50 %}...{% endif %}</td>
-                        <td>{{ pres.dosage or 'N/A' }}</td>
+                        <td>{{ pres.medicines[:40] }}{% if pres.medicines|length > 40 %}...{% endif %}</td>
+                        <td>{{ pres.dosage or '-' }}</td>
                         <td>{{ pres.prescribed_date }}</td>
                         <td class="actions">
-                            <a href="{{ url_for('prescriptions.view', prescription_id=pres.prescription_id) }}" class="btn btn-sm btn-info" title="View"><i class="fas fa-eye"></i></a>
-                            {% if session.get('role') in ['Admin', 'Doctor'] %}
-                            <a href="{{ url_for('prescriptions.edit', prescription_id=pres.prescription_id) }}" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>
-                            {% endif %}
+                            <a href="{{ url_for('prescriptions.edit', prescription_id=pres.prescription_id) }}" class="btn-icon edit" title="Edit"><i class="fas fa-edit"></i></a>
                             {% if session.get('role') == 'Admin' %}
                             <form method="POST" action="{{ url_for('prescriptions.delete', prescription_id=pres.prescription_id) }}" style="display:inline" onsubmit="return confirm('Delete this prescription?')">
-                                <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                                <button type="submit" class="btn-icon delete" title="Delete"><i class="fas fa-trash"></i></button>
                             </form>
                             {% endif %}
                         </td>
                     </tr>
                     {% else %}
-                    <tr><td colspan="7" class="text-center">No prescriptions found</td></tr>
+                    <tr><td colspan="7" class="text-center" style="color: var(--text-muted); padding: 40px;">No prescriptions found</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
         {% if total_pages > 1 %}
         <div class="pagination">
-            {% if page > 1 %}<a href="?page={{ page-1 }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm btn-outline">&laquo; Previous</a>{% endif %}
+            {% if page > 1 %}<a href="?page={{ page-1 }}&search={{ search }}" class="btn btn-sm btn-outline">&laquo; Previous</a>{% endif %}
             {% for p in range(1, total_pages+1) %}
-            <a href="?page={{ p }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-outline{% endif %}">{{ p }}</a>
+            <a href="?page={{ p }}&search={{ search }}" class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-outline{% endif %}">{{ p }}</a>
             {% endfor %}
-            {% if page < total_pages %}<a href="?page={{ page+1 }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm btn-outline">Next &raquo;</a>{% endif %}
+            {% if page < total_pages %}<a href="?page={{ page+1 }}&search={{ search }}" class="btn btn-sm btn-outline">Next &raquo;</a>{% endif %}
         </div>
         {% endif %}
     </div>

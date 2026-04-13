@@ -1,47 +1,42 @@
 {% extends "base.html" %}
-{% block title %}Login - Hospital Management System{% endblock %}
+{% block title %}Login - MediCore HMS{% endblock %}
 
 {% block content %}
 <div class="login-container">
     <div class="login-card">
         <div class="login-header">
-            <i class="fas fa-hospital fa-3x"></i>
-            <h1>Hospital Management System</h1>
-            <p>Sign in to your account</p>
+            <div class="login-icon">🏥</div>
+            <h1>MediCore HMS</h1>
+            <p>Hospital Management System</p>
+            <div class="login-tabs">
+                <div class="login-tab active">Login</div>
+                <div class="login-tab">Register</div>
+            </div>
         </div>
+
+        <div class="login-credentials">
+            <strong>Admin:</strong> admin / admin123<br>
+            <strong>Patient:</strong> patient1 / patient123
+        </div>
+
         <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
             <div class="form-group">
-                <label for="username"><i class="fas fa-user"></i> Username</label>
-                <input type="text" id="username" name="username" placeholder="Enter your username" required autofocus>
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter your username" required autofocus>
             </div>
             <div class="form-group">
-                <label for="password"><i class="fas fa-lock"></i> Password</label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">
-                <i class="fas fa-sign-in-alt"></i> Sign In
-            </button>
+            <div class="login-extras">
+                <label><input type="checkbox"> Remember me</label>
+                <a href="#">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign In to Dashboard</button>
         </form>
-        <div class="login-footer">
-            <h4>Demo Credentials</h4>
-            <div class="credentials-grid">
-                <div class="credential-item">
-                    <span class="role-badge admin">Admin</span>
-                    <code>admin / admin123</code>
-                </div>
-                <div class="credential-item">
-                    <span class="role-badge doctor">Doctor</span>
-                    <code>doctor1 / doctor123</code>
-                </div>
-                <div class="credential-item">
-                    <span class="role-badge patient">Patient</span>
-                    <code>patient1 / patient123</code>
-                </div>
-                <div class="credential-item">
-                    <span class="role-badge staff">Staff</span>
-                    <code>staff1 / staff123</code>
-                </div>
-            </div>
+
+        <div class="login-footer-text">
+            Don't have an account? <a href="#">Register here</a>
         </div>
     </div>
 </div>

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% block title %}New Prescription - HMS{% endblock %}
-{% block page_title %}Add New Prescription{% endblock %}
+{% block title %}Add Prescription - MediCore HMS{% endblock %}
+{% block page_title %}Add Prescription{% endblock %}
+{% block page_subtitle %}Create a new prescription{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-prescription"></i> Add New Prescription</h3>
+        <h3><i class="fas fa-prescription"></i> New Prescription</h3>
         <a href="{{ url_for('prescriptions.list_prescriptions') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
     <div class="card-body">
@@ -14,8 +15,8 @@
                 <label for="patient_id">Patient <span class="required">*</span></label>
                 <select id="patient_id" name="patient_id" required>
                     <option value="">Select Patient</option>
-                    {% for p in patients %}
-                    <option value="{{ p.patient_id }}">{{ p.name }} (ID: {{ p.patient_id }})</option>
+                    {% for patient in patients %}
+                    <option value="{{ patient.patient_id }}">{{ patient.name }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -23,26 +24,22 @@
                 <label for="doctor_id">Doctor <span class="required">*</span></label>
                 <select id="doctor_id" name="doctor_id" required>
                     <option value="">Select Doctor</option>
-                    {% for d in doctors %}
-                    <option value="{{ d.doctor_id }}">{{ d.name }} - {{ d.specialization }}</option>
+                    {% for doctor in doctors %}
+                    <option value="{{ doctor.doctor_id }}">{{ doctor.name }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="form-group">
-                <label for="prescribed_date">Date <span class="required">*</span></label>
-                <input type="date" id="prescribed_date" name="prescribed_date" required>
-            </div>
             <div class="form-group full-width">
                 <label for="medicines">Medicines <span class="required">*</span></label>
-                <textarea id="medicines" name="medicines" rows="3" required placeholder="e.g., Paracetamol 500mg, Amoxicillin 250mg"></textarea>
+                <textarea id="medicines" name="medicines" rows="3" required placeholder="List medicines..."></textarea>
+            </div>
+            <div class="form-group">
+                <label for="dosage">Dosage</label>
+                <input type="text" id="dosage" name="dosage" placeholder="e.g., 2 times daily">
             </div>
             <div class="form-group full-width">
-                <label for="dosage">Dosage Instructions</label>
-                <input type="text" id="dosage" name="dosage" placeholder="e.g., Twice daily after meals">
-            </div>
-            <div class="form-group full-width">
-                <label for="notes">Additional Notes</label>
-                <textarea id="notes" name="notes" rows="2" placeholder="Special instructions..."></textarea>
+                <label for="notes">Notes</label>
+                <textarea id="notes" name="notes" rows="2" placeholder="Additional notes..."></textarea>
             </div>
             <div class="form-actions full-width">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Prescription</button>

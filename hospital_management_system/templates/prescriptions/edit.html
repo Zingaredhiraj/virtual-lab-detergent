@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Edit Prescription - HMS{% endblock %}
+{% block title %}Edit Prescription - MediCore HMS{% endblock %}
 {% block page_title %}Edit Prescription{% endblock %}
+{% block page_subtitle %}Update prescription details{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -13,33 +14,29 @@
             <div class="form-group">
                 <label for="patient_id">Patient <span class="required">*</span></label>
                 <select id="patient_id" name="patient_id" required>
-                    {% for p in patients %}
-                    <option value="{{ p.patient_id }}" {% if prescription.patient_id == p.patient_id %}selected{% endif %}>{{ p.name }}</option>
+                    {% for patient in patients %}
+                    <option value="{{ patient.patient_id }}" {% if prescription.patient_id == patient.patient_id %}selected{% endif %}>{{ patient.name }}</option>
                     {% endfor %}
                 </select>
             </div>
             <div class="form-group">
                 <label for="doctor_id">Doctor <span class="required">*</span></label>
                 <select id="doctor_id" name="doctor_id" required>
-                    {% for d in doctors %}
-                    <option value="{{ d.doctor_id }}" {% if prescription.doctor_id == d.doctor_id %}selected{% endif %}>{{ d.name }} - {{ d.specialization }}</option>
+                    {% for doctor in doctors %}
+                    <option value="{{ doctor.doctor_id }}" {% if prescription.doctor_id == doctor.doctor_id %}selected{% endif %}>{{ doctor.name }}</option>
                     {% endfor %}
                 </select>
-            </div>
-            <div class="form-group">
-                <label for="prescribed_date">Date <span class="required">*</span></label>
-                <input type="date" id="prescribed_date" name="prescribed_date" value="{{ prescription.prescribed_date }}" required>
             </div>
             <div class="form-group full-width">
                 <label for="medicines">Medicines <span class="required">*</span></label>
                 <textarea id="medicines" name="medicines" rows="3" required>{{ prescription.medicines }}</textarea>
             </div>
-            <div class="form-group full-width">
-                <label for="dosage">Dosage Instructions</label>
+            <div class="form-group">
+                <label for="dosage">Dosage</label>
                 <input type="text" id="dosage" name="dosage" value="{{ prescription.dosage or '' }}">
             </div>
             <div class="form-group full-width">
-                <label for="notes">Additional Notes</label>
+                <label for="notes">Notes</label>
                 <textarea id="notes" name="notes" rows="2">{{ prescription.notes or '' }}</textarea>
             </div>
             <div class="form-actions full-width">

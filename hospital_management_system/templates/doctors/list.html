@@ -1,75 +1,60 @@
 {% extends "base.html" %}
-{% block title %}Doctors - HMS{% endblock %}
-{% block page_title %}Doctor Management{% endblock %}
+{% block title %}Doctors - MediCore HMS{% endblock %}
+{% block page_title %}Doctors{% endblock %}
+{% block page_subtitle %}View and manage medical staff{% endblock %}
 
 {% block content %}
 <div class="module-header">
+    <div class="module-title">
+        <h2>Medical Staff</h2>
+        <p>Manage doctors and specialists</p>
+    </div>
     <div class="module-actions">
         {% if session.get('role') == 'Admin' %}
-        <a href="{{ url_for('doctors.add') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Doctor</a>
+        <a href="{{ url_for('doctors.add') }}" class="btn btn-primary">+ Add Doctor</a>
         {% endif %}
     </div>
-    <form class="search-form" method="GET" action="{{ url_for('doctors.list_doctors') }}">
-        <div class="search-box">
-            <input type="text" name="search" placeholder="Search by name, specialization..." value="{{ search }}">
-            <button type="submit"><i class="fas fa-search"></i></button>
-        </div>
-    </form>
 </div>
 
 <div class="card">
-    <div class="card-header">
-        <h3><i class="fas fa-user-md"></i> Doctors ({{ total }} records)</h3>
-    </div>
     <div class="card-body">
-        <div class="table-responsive">
-            <table class="data-table">
-                <thead>
-                    <tr>
-                        <th><a href="?sort_by=doctor_id&sort_order={{ 'DESC' if sort_by == 'doctor_id' and sort_order == 'ASC' else 'ASC' }}&search={{ search }}" class="sort-link">ID <i class="fas fa-sort"></i></a></th>
-                        <th><a href="?sort_by=name&sort_order={{ 'DESC' if sort_by == 'name' and sort_order == 'ASC' else 'ASC' }}&search={{ search }}" class="sort-link">Name <i class="fas fa-sort"></i></a></th>
-                        <th><a href="?sort_by=specialization&sort_order={{ 'DESC' if sort_by == 'specialization' and sort_order == 'ASC' else 'ASC' }}&search={{ search }}" class="sort-link">Specialization <i class="fas fa-sort"></i></a></th>
-                        <th>Department</th>
-                        <th>Contact</th>
-                        <th>Schedule</th>
-                        <th>Appointments</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for doctor in doctors %}
-                    <tr>
-                        <td>{{ doctor.doctor_id }}</td>
-                        <td><strong>{{ doctor.name }}</strong></td>
-                        <td>{{ doctor.specialization }}</td>
-                        <td>{{ doctor.department_name or 'N/A' }}</td>
-                        <td>{{ doctor.contact }}</td>
-                        <td>{{ doctor.schedule or 'N/A' }}</td>
-                        <td><span class="badge">{{ doctor.total_appointments }}</span></td>
-                        <td class="actions">
-                            {% if session.get('role') == 'Admin' %}
-                            <a href="{{ url_for('doctors.edit', doctor_id=doctor.doctor_id) }}" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>
-                            <form method="POST" action="{{ url_for('doctors.delete', doctor_id=doctor.doctor_id) }}" style="display:inline" onsubmit="return confirm('Delete this doctor?')">
-                                <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash"></i></button>
-                            </form>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr><td colspan="8" class="text-center">No doctors found</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div class="search-filter-bar">
+            <form class="search-box" method="GET" action="{{ url_for('doctors.list_doctors') }}">
+                <i class="fas fa-search"></i>
+                <input type="text" name="search" placeholder="Search doctors..." value="{{ search }}">
+            </form>
+            <div class="filter-pills">
+                <a href="{{ url_for('doctors.list_doctors') }}" class="filter-pill active">All</a>
+            </div>
         </div>
-        {% if total_pages > 1 %}
-        <div class="pagination">
-            {% if page > 1 %}<a href="?page={{ page-1 }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm btn-outline">&laquo; Previous</a>{% endif %}
-            {% for p in range(1, total_pages+1) %}
-            <a href="?page={{ p }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-outline{% endif %}">{{ p }}</a>
+
+        {% set colors = ['avatar-blue', 'avatar-purple', 'avatar-red', 'avatar-green', 'avatar-orange', 'avatar-teal', 'avatar-pink', 'avatar-yellow'] %}
+        {% set tag_colors = ['tag-blue', 'tag-purple', 'tag-green', 'tag-orange', 'tag-teal', 'tag-pink'] %}
+        <div class="doctor-grid">
+            {% for doctor in doctors %}
+            <div class="doctor-card">
+                <div class="doctor-avatar {{ colors[loop.index0 % 8] }}">{{ doctor.name.split()[-1][0]|upper }}{{ doctor.name.split()[0][0]|upper }}</div>
+                <h4>{{ doctor.name }}</h4>
+                <div class="doctor-spec">{{ doctor.specialization }}</div>
+                <div class="doctor-tags">
+                    <span class="doctor-tag {{ tag_colors[loop.index0 % 6] }}">{{ doctor.department_name or 'General' }}</span>
+                    <span class="doctor-tag" style="background: rgba(255,255,255,0.06); color: var(--text-light);">{{ doctor.schedule or 'Mon-Fri' }}</span>
+                </div>
+                <div class="doctor-contact">📞 {{ doctor.contact or 'N/A' }}</div>
+                <div class="doctor-fee">Appointments: {{ doctor.appointment_count }}</div>
+                <div class="doctor-actions">
+                    {% if session.get('role') == 'Admin' %}
+                    <a href="{{ url_for('doctors.edit', doctor_id=doctor.doctor_id) }}" class="btn-edit">Edit</a>
+                    <form method="POST" action="{{ url_for('doctors.delete', doctor_id=doctor.doctor_id) }}" style="display:inline" onsubmit="return confirm('Delete this doctor?')">
+                        <button type="submit" class="btn-del" title="Delete"><i class="fas fa-trash"></i></button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% else %}
+            <p style="color: var(--text-muted); padding: 40px; text-align: center; grid-column: 1/-1;">No doctors found</p>
             {% endfor %}
-            {% if page < total_pages %}<a href="?page={{ page+1 }}&search={{ search }}&sort_by={{ sort_by }}&sort_order={{ sort_order }}" class="btn btn-sm btn-outline">Next &raquo;</a>{% endif %}
         </div>
-        {% endif %}
     </div>
 </div>
 {% endblock %}

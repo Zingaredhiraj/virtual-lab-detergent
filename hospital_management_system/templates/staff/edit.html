@@ -1,11 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Edit Staff - HMS{% endblock %}
+{% block title %}Edit Staff - MediCore HMS{% endblock %}
 {% block page_title %}Edit Staff{% endblock %}
+{% block page_subtitle %}Update staff information{% endblock %}
 
 {% block content %}
 <div class="card">
     <div class="card-header">
-        <h3><i class="fas fa-user-edit"></i> Edit Staff: {{ staff_member.name }}</h3>
+        <h3><i class="fas fa-users-cog"></i> Edit: {{ staff_member.name }}</h3>
         <a href="{{ url_for('staff.list_staff') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
     </div>
     <div class="card-body">
@@ -16,24 +17,22 @@
             </div>
             <div class="form-group">
                 <label for="role">Role <span class="required">*</span></label>
-                <input type="text" id="role" name="role" value="{{ staff_member.role }}" required>
+                <select id="role" name="role" required>
+                    <option value="Nurse" {% if staff_member.role == 'Nurse' %}selected{% endif %}>Nurse</option>
+                    <option value="Receptionist" {% if staff_member.role == 'Receptionist' %}selected{% endif %}>Receptionist</option>
+                    <option value="Lab Technician" {% if staff_member.role == 'Lab Technician' %}selected{% endif %}>Lab Technician</option>
+                    <option value="Pharmacist" {% if staff_member.role == 'Pharmacist' %}selected{% endif %}>Pharmacist</option>
+                    <option value="Admin" {% if staff_member.role == 'Admin' %}selected{% endif %}>Admin</option>
+                    <option value="Other" {% if staff_member.role == 'Other' %}selected{% endif %}>Other</option>
+                </select>
             </div>
             <div class="form-group">
-                <label for="contact">Contact <span class="required">*</span></label>
-                <input type="text" id="contact" name="contact" value="{{ staff_member.contact }}" required>
+                <label for="contact">Phone</label>
+                <input type="text" id="contact" name="contact" value="{{ staff_member.contact or '' }}">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
                 <input type="email" id="email" name="email" value="{{ staff_member.email or '' }}">
-            </div>
-            <div class="form-group">
-                <label for="department_id">Department</label>
-                <select id="department_id" name="department_id">
-                    <option value="">Select Department</option>
-                    {% for dept in departments %}
-                    <option value="{{ dept.department_id }}" {% if staff_member.department_id == dept.department_id %}selected{% endif %}>{{ dept.name }}</option>
-                    {% endfor %}
-                </select>
             </div>
             <div class="form-actions full-width">
                 <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Staff</button>
