@@ -24,7 +24,7 @@
             </form>
             <div class="filter-pills">
                 <a href="{{ url_for('appointments.list_appointments', search=search) }}" class="filter-pill {% if not status_filter %}active{% endif %}">All</a>
-                <a href="{{ url_for('appointments.list_appointments', status='Scheduled', search=search) }}" class="filter-pill {% if status_filter == 'Scheduled' %}active{% endif %}">Scheduled</a>
+                <a href="{{ url_for('appointments.list_appointments', status='Confirmed', search=search) }}" class="filter-pill {% if status_filter == 'Confirmed' %}active{% endif %}">Confirmed</a>
                 <a href="{{ url_for('appointments.list_appointments', status='Completed', search=search) }}" class="filter-pill {% if status_filter == 'Completed' %}active{% endif %}">Completed</a>
                 <a href="{{ url_for('appointments.list_appointments', status='Cancelled', search=search) }}" class="filter-pill {% if status_filter == 'Cancelled' %}active{% endif %}">Cancelled</a>
                 <a href="{{ url_for('appointments.list_appointments', status='Pending', search=search) }}" class="filter-pill {% if status_filter == 'Pending' %}active{% endif %}">Pending</a>
@@ -53,8 +53,8 @@
                         <td>
                             <form method="POST" action="{{ url_for('appointments.update_status', appointment_id=apt.appointment_id) }}" class="inline-form">
                                 <select name="status" onchange="this.form.submit()" class="status-select status-{{ apt.status|lower }}">
-                                    <option value="Scheduled" {% if apt.status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
                                     <option value="Pending" {% if apt.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                    <option value="Confirmed" {% if apt.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
                                     <option value="Completed" {% if apt.status == 'Completed' %}selected{% endif %}>Completed</option>
                                     <option value="Cancelled" {% if apt.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
                                 </select>

@@ -37,7 +37,7 @@
                 </thead>
                 <tbody>
                     {% set colors = ['avatar-blue', 'avatar-purple', 'avatar-green', 'avatar-orange', 'avatar-teal', 'avatar-pink'] %}
-                    {% for member in staff %}
+                    {% for member in staff_members %}
                     <tr>
                         <td><span class="badge">S{{ "%03d"|format(member.staff_id) }}</span></td>
                         <td>

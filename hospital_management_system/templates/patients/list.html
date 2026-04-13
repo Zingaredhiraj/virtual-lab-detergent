@@ -53,7 +53,7 @@
                         </td>
                         <td>{{ patient.age }} / {{ patient.gender }}</td>
                         <td>{{ patient.contact or 'N/A' }}</td>
-                        <td><span class="badge">{{ patient.appointment_count }}</span></td>
+                        <td><span class="badge">{{ patient.total_appointments }}</span></td>
                         <td><span class="status-badge status-active">Active</span></td>
                         <td class="actions">
                             <a href="{{ url_for('patients.view', patient_id=patient.patient_id) }}" class="btn-icon view" title="View"><i class="fas fa-eye"></i></a>

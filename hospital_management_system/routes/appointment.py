@@ -109,7 +109,26 @@ def edit(appointment_id):
 @login_required
 @role_required('Admin', 'Staff', 'Doctor')
 def change_status(appointment_id, status):
-    """Quick status update for an appointment."""
+    """Quick status update for an appointment via URL path."""
+    valid_statuses = ['Pending', 'Confirmed', 'Completed', 'Cancelled']
+    if status not in valid_statuses:
+        flash('Invalid status.', 'danger')
+        return redirect(url_for('appointments.list_appointments'))
+
+    result = update_appointment_status(appointment_id, status)
+    if result is not None:
+        flash(f'Appointment status updated to {status}.', 'success')
+    else:
+        flash('Error updating appointment status.', 'danger')
+    return redirect(url_for('appointments.list_appointments'))
+
+
+@appointment_bp.route('/update-status/<int:appointment_id>', methods=['POST'])
+@login_required
+@role_required('Admin', 'Staff', 'Doctor')
+def update_status(appointment_id):
+    """Update appointment status via form POST (inline dropdown)."""
+    status = request.form.get('status', '')
     valid_statuses = ['Pending', 'Confirmed', 'Completed', 'Cancelled']
     if status not in valid_statuses:
         flash('Invalid status.', 'danger')

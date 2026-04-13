@@ -5,6 +5,9 @@
 
 {% block content %}
 <!-- Billing Stats -->
+{% set total_billed = summary | sum(attribute='total_amount') if summary else 0 %}
+{% set total_paid = summary | selectattr('payment_status', 'equalto', 'Paid') | sum(attribute='total_amount') if summary else 0 %}
+{% set total_pending = summary | selectattr('payment_status', 'equalto', 'Unpaid') | sum(attribute='total_amount') if summary else 0 %}
 <div class="billing-stats">
     <div class="billing-stat-card">
         <div class="billing-stat-icon" style="background: rgba(59,130,246,0.15); color: #3b82f6;"><i class="fas fa-file-invoice-dollar"></i></div>
@@ -23,7 +26,7 @@
     <div class="billing-stat-card">
         <div class="billing-stat-icon" style="background: rgba(245,158,11,0.15); color: #f59e0b;"><i class="fas fa-clock"></i></div>
         <div class="billing-stat-info">
-            <p>Pending</p>
+            <p>Unpaid</p>
             <h3>₹{{ "%.0f"|format(total_pending) }}</h3>
         </div>
     </div>
@@ -49,7 +52,7 @@
             <div class="filter-pills">
                 <a href="{{ url_for('bills.list_bills', search=search) }}" class="filter-pill {% if not payment_filter %}active{% endif %}">All</a>
                 <a href="{{ url_for('bills.list_bills', payment_status='Paid', search=search) }}" class="filter-pill {% if payment_filter == 'Paid' %}active{% endif %}">Paid</a>
-                <a href="{{ url_for('bills.list_bills', payment_status='Pending', search=search) }}" class="filter-pill {% if payment_filter == 'Pending' %}active{% endif %}">Pending</a>
+                <a href="{{ url_for('bills.list_bills', payment_status='Unpaid', search=search) }}" class="filter-pill {% if payment_filter == 'Unpaid' %}active{% endif %}">Unpaid</a>
                 <a href="{{ url_for('bills.list_bills', payment_status='Partial', search=search) }}" class="filter-pill {% if payment_filter == 'Partial' %}active{% endif %}">Partial</a>
             </div>
         </div>

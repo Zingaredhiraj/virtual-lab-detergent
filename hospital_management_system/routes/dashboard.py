@@ -86,4 +86,29 @@ def index():
     """, fetch=True)
     stats['dept_doctors'] = dept_doctors or []
 
-    return render_template('dashboard.html', stats=stats)
+    # Build appointment_status list for template
+    appointment_status = []
+    if appointment_stats:
+        for row in appointment_stats:
+            appointment_status.append({'status': row['status'], 'count': row['count']})
+
+    # Build billing_summary list for template
+    billing_summary_list = []
+    if billing_summary:
+        for row in billing_summary:
+            billing_summary_list.append({
+                'payment_status': row['payment_status'],
+                'total_bills': row['count'],
+                'total_amount': float(row['total']),
+                'avg_amount': float(row['total']) / row['count'] if row['count'] else 0
+            })
+
+    return render_template('dashboard.html',
+                           total_patients=stats['total_patients'],
+                           total_doctors=stats['total_doctors'],
+                           total_appointments=stats['total_appointments'],
+                           total_revenue=stats['total_revenue'],
+                           appointment_status=appointment_status,
+                           billing_summary=billing_summary_list,
+                           recent_appointments=stats['recent_appointments'],
+                           dept_doctors=stats['dept_doctors'])

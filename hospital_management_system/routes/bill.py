@@ -19,7 +19,7 @@ def list_bills():
     """List all bills with filters."""
     page = request.args.get('page', 1, type=int)
     search = request.args.get('search', '', type=str).strip()
-    status_filter = request.args.get('status', '', type=str).strip()
+    status_filter = request.args.get('payment_status', '', type=str).strip()
     sort_by = request.args.get('sort_by', 'created_at', type=str)
     sort_order = request.args.get('sort_order', 'DESC', type=str)
 
@@ -34,12 +34,22 @@ def list_bills():
     # Get billing summary
     summary = get_billing_summary()
 
+    # Compute totals from summary for template
+    billing_summary_list = []
+    if summary:
+        for row in summary:
+            billing_summary_list.append({
+                'payment_status': row['payment_status'],
+                'total_bills': row['count'],
+                'total_amount': float(row['total']),
+            })
+
     return render_template('bills/list.html',
                            bills=bills or [],
                            page=page, total_pages=total_pages, total=total,
-                           search=search, status_filter=status_filter,
+                           search=search, payment_filter=status_filter,
                            sort_by=sort_by, sort_order=sort_order,
-                           summary=summary or [])
+                           summary=billing_summary_list)
 
 
 @bill_bp.route('/add', methods=['GET', 'POST'])

@@ -41,7 +41,7 @@
                     <span class="doctor-tag" style="background: rgba(255,255,255,0.06); color: var(--text-light);">{{ doctor.schedule or 'Mon-Fri' }}</span>
                 </div>
                 <div class="doctor-contact">📞 {{ doctor.contact or 'N/A' }}</div>
-                <div class="doctor-fee">Appointments: {{ doctor.appointment_count }}</div>
+                <div class="doctor-fee">Appointments: {{ doctor.total_appointments }}</div>
                 <div class="doctor-actions">
                     {% if session.get('role') == 'Admin' %}
                     <a href="{{ url_for('doctors.edit', doctor_id=doctor.doctor_id) }}" class="btn-edit">Edit</a>
