@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Bill Details - HMS{% endblock %}
+{% block page_title %}Bill Details{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Bill #{{ bill.bill_id }}</h3>
+        <a href="{{ url_for('bills.list_bills') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body">
+        <div class="bill-receipt">
+            <div class="receipt-header">
+                <h2><i class="fas fa-hospital"></i> Hospital Management System</h2>
+                <p>Bill Receipt</p>
+            </div>
+            <div class="receipt-divider"></div>
+            <div class="detail-grid">
+                <div class="detail-item"><strong>Bill ID:</strong> #{{ bill.bill_id }}</div>
+                <div class="detail-item"><strong>Date:</strong> {{ bill.created_at }}</div>
+                <div class="detail-item"><strong>Patient Name:</strong> {{ bill.patient_name }}</div>
+                <div class="detail-item"><strong>Patient Contact:</strong> {{ bill.patient_contact }}</div>
+                <div class="detail-item full-width"><strong>Description:</strong> {{ bill.description or 'N/A' }}</div>
+            </div>
+            <div class="receipt-divider"></div>
+            <div class="receipt-total">
+                <div class="total-row">
+                    <span>Total Amount:</span>
+                    <span class="amount">₹{{ "%.2f"|format(bill.amount) }}</span>
+                </div>
+                <div class="total-row">
+                    <span>Payment Status:</span>
+                    <span class="status-badge payment-{{ bill.payment_status|lower }}">{{ bill.payment_status }}</span>
+                </div>
+                {% if bill.payment_date %}
+                <div class="total-row">
+                    <span>Payment Date:</span>
+                    <span>{{ bill.payment_date }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

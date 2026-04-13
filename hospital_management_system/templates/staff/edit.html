@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Edit Staff - HMS{% endblock %}
+{% block page_title %}Edit Staff{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-user-edit"></i> Edit Staff: {{ staff_member.name }}</h3>
+        <a href="{{ url_for('staff.list_staff') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="form-grid">
+            <div class="form-group">
+                <label for="name">Full Name <span class="required">*</span></label>
+                <input type="text" id="name" name="name" value="{{ staff_member.name }}" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role <span class="required">*</span></label>
+                <input type="text" id="role" name="role" value="{{ staff_member.role }}" required>
+            </div>
+            <div class="form-group">
+                <label for="contact">Contact <span class="required">*</span></label>
+                <input type="text" id="contact" name="contact" value="{{ staff_member.contact }}" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="{{ staff_member.email or '' }}">
+            </div>
+            <div class="form-group">
+                <label for="department_id">Department</label>
+                <select id="department_id" name="department_id">
+                    <option value="">Select Department</option>
+                    {% for dept in departments %}
+                    <option value="{{ dept.department_id }}" {% if staff_member.department_id == dept.department_id %}selected{% endif %}>{{ dept.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Staff</button>
+                <a href="{{ url_for('staff.list_staff') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

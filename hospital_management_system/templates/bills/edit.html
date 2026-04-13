@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Edit Bill - HMS{% endblock %}
+{% block page_title %}Edit Bill{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Edit Bill #{{ bill.bill_id }}</h3>
+        <a href="{{ url_for('bills.list_bills') }}" class="btn btn-sm btn-outline"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+    <div class="card-body">
+        <form method="POST" class="form-grid">
+            <div class="form-group">
+                <label for="patient_id">Patient <span class="required">*</span></label>
+                <select id="patient_id" name="patient_id" required>
+                    {% for p in patients %}
+                    <option value="{{ p.patient_id }}" {% if bill.patient_id == p.patient_id %}selected{% endif %}>{{ p.name }} (ID: {{ p.patient_id }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="amount">Amount (₹) <span class="required">*</span></label>
+                <input type="number" id="amount" name="amount" step="0.01" min="0" value="{{ bill.amount }}" required>
+            </div>
+            <div class="form-group full-width">
+                <label for="description">Description</label>
+                <input type="text" id="description" name="description" value="{{ bill.description or '' }}">
+            </div>
+            <div class="form-group">
+                <label for="payment_status">Payment Status</label>
+                <select id="payment_status" name="payment_status">
+                    <option value="Unpaid" {% if bill.payment_status == 'Unpaid' %}selected{% endif %}>Unpaid</option>
+                    <option value="Paid" {% if bill.payment_status == 'Paid' %}selected{% endif %}>Paid</option>
+                    <option value="Partial" {% if bill.payment_status == 'Partial' %}selected{% endif %}>Partial</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="payment_date">Payment Date</label>
+                <input type="date" id="payment_date" name="payment_date" value="{{ bill.payment_date if bill.payment_date else '' }}">
+            </div>
+            <div class="form-actions full-width">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Update Bill</button>
+                <a href="{{ url_for('bills.list_bills') }}" class="btn btn-outline">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

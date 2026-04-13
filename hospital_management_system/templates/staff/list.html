@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Staff - HMS{% endblock %}
+{% block page_title %}Staff Management{% endblock %}
+
+{% block content %}
+<div class="module-header">
+    <div class="module-actions">
+        {% if session.get('role') == 'Admin' %}
+        <a href="{{ url_for('staff.add') }}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Staff</a>
+        {% endif %}
+    </div>
+    <form class="search-form" method="GET" action="{{ url_for('staff.list_staff') }}">
+        <div class="search-box">
+            <input type="text" name="search" placeholder="Search by name, role..." value="{{ search }}">
+            <button type="submit"><i class="fas fa-search"></i></button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3><i class="fas fa-users"></i> Staff Members ({{ total }} records)</h3>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Department</th>
+                        <th>Contact</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for member in staff_members %}
+                    <tr>
+                        <td>{{ member.staff_id }}</td>
+                        <td><strong>{{ member.name }}</strong></td>
+                        <td>{{ member.role }}</td>
+                        <td>{{ member.department_name or 'N/A' }}</td>
+                        <td>{{ member.contact }}</td>
+                        <td>{{ member.email or 'N/A' }}</td>
+                        <td class="actions">
+                            {% if session.get('role') == 'Admin' %}
+                            <a href="{{ url_for('staff.edit', staff_id=member.staff_id) }}" class="btn btn-sm btn-warning" title="Edit"><i class="fas fa-edit"></i></a>
+                            <form method="POST" action="{{ url_for('staff.delete', staff_id=member.staff_id) }}" style="display:inline" onsubmit="return confirm('Delete this staff member?')">
+                                <button type="submit" class="btn btn-sm btn-danger" title="Delete"><i class="fas fa-trash"></i></button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="7" class="text-center">No staff members found</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}<a href="?page={{ page-1 }}&search={{ search }}" class="btn btn-sm btn-outline">&laquo; Previous</a>{% endif %}
+            {% for p in range(1, total_pages+1) %}
+            <a href="?page={{ p }}&search={{ search }}" class="btn btn-sm {% if p == page %}btn-primary{% else %}btn-outline{% endif %}">{{ p }}</a>
+            {% endfor %}
+            {% if page < total_pages %}<a href="?page={{ page+1 }}&search={{ search }}" class="btn btn-sm btn-outline">Next &raquo;</a>{% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
